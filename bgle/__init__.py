@@ -40,8 +40,12 @@ class BGLEIntegrator:
         k4x,k4v=self.f_rk(x+k3x*self.dt,  v+k3v*self.dt,rmi,fr,1.0,0.0,last_v,last_rmi)
         return x + self.dt*(k1x+2.*k2x+2.*k3x+k4x)/6., v + self.dt*(k1v+2.*k2v+2.*k3v+k4v)/6.
 
-    def integrate(self,n_steps,x0=0.,v0=0.):
-        noise=self.noise_generator.generate(n_steps)
+    def integrate(self,n_steps,x0=0.,v0=0., set_noise_to_zero=False):
+        if set_noise_to_zero:
+            noise=np.zeros(n_steps)
+        else:
+            noise=self.noise_generator.generate(n_steps)
+            
         x,v=x0,v0
 
         self.v_trj=np.zeros(n_steps)
