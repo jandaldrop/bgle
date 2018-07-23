@@ -40,22 +40,40 @@ class BGLEIntegrator:
         k4x,k4v=self.f_rk(x+k3x*self.dt,  v+k3v*self.dt,rmi,fr,1.0,0.0,last_v,last_rmi)
         return x + self.dt*(k1x+2.*k2x+2.*k3x+k4x)/6., v + self.dt*(k1v+2.*k2v+2.*k3v+k4v)/6.
 
-    def integrate(self,n_steps,x0=0.,v0=0., set_noise_to_zero=False):
+    def integrate(self,n_steps,x0=0.,v0=0., 
+                  set_noise_to_zero=False, _custom_noise_array=None,
+                  _predef_x=None, _predef_v=None, _n_0=0):
         if set_noise_to_zero:
             noise=np.zeros(n_steps)
         else:
-            noise=self.noise_generator.generate(n_steps)
-            
+            if _custom_noise_array is None:
+                noise=self.noise_generator.generate(n_steps)
+            else:
+                assert(len(_custom_noise_array)==n_steps)
+                noise=_custom_noise_array
+
         x,v=x0,v0
 
-        self.v_trj=np.zeros(n_steps)
-        self.x_trj=np.zeros(n_steps)
+        if _predef_v is None:
+            self.v_trj=np.zeros(n_steps)
+        else:
+            assert(len(_predef_v)==n_steps)
+            assert(_predef_v[_n_0-1]==v)
+            self.v_trj=_predef_v
+
+        if _predef_x is None:
+            self.x_trj=np.zeros(n_steps)
+        else:
+            assert(len(_predef_x)==n_steps)
+            assert(_predef_x[_n_0-1]==x)
+            self.x_trj=_predef_x
+
         self.t_trj=np.arange(0.,n_steps*self.dt,self.dt)
 
         rmi=0.
-        for ind in range(n_steps):
+        for ind in range(_n_0, n_steps):
             last_rmi=rmi
-            if n_steps>1:
+            if ind>1:
                 rmi=self.mem_int_red(self.v_trj[:ind])
                 last_v=self.v_trj[ind-1]
             else:
