@@ -4,8 +4,7 @@ from .noise import ColoredNoiseGenerator
 
 class BGLEIntegrator:
     """
-    The Class holding the bGLE integrator.
-    The current implementation is in python, and therefore not very fast.
+    The Class holding the BGLE integrator.
     """
     def __init__(self,kernel, t, m=1., dU=lambda x: 0., add_zeros=0, verbose=True):
         self.kernel=kernel
