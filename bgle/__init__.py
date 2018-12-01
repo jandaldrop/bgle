@@ -1,6 +1,4 @@
-import numpy as np
+from bgle.noise import ColoredNoiseGenerator
+from bgle.integrator import BGLEIntegrator
 
-from .noise import *
-from .integrator import *
-
-__all__=['noise', 'integrator']
+__all__ = ['noise', 'integrator']
